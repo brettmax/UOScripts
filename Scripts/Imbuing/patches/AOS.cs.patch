@@ -1,0 +1,10 @@
+--- a/Projects/UOContent/Misc/AOS.cs
++++ b/Projects/UOContent/Misc/AOS.cs
+@@ -304,6 +304,7 @@ public enum AosAttribute
+     CastingFocus = 0x00200000,
+     EnhancePotions = 0x00400000,
+     IncreasedKarmaLoss = 0x00800000,
++    BalancedWeapon = 0x01000000
+ }
+
+ [Flags]

@@ -1,0 +1,15 @@
+--- a/Projects/UOContent/Items/Weapons/BaseWeapon.cs
++++ b/Projects/UOContent/Items/Weapons/BaseWeapon.cs
+@@ -1070,6 +1070,12 @@ public abstract partial class BaseWeapon : Item, IWeapon, ICraftable, ISlayer, I
+             }
+         }
+
++        // Balanced property - works on ALL two-handed weapons (melee and ranged)
++        if (Core.ML && Attributes[AosAttribute.BalancedWeapon] > 0 && Layer == Layer.TwoHanded)
++        {
++            list.Add(1072792); // Balanced
++        }
++
+         var ranged = this as BaseRanged;
+
+         // Velocity (ranged only)
