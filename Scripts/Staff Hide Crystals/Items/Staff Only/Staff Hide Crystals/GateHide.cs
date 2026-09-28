@@ -6,16 +6,16 @@ namespace Server.Items
     [SerializationGenerator(0)]
     public partial class GateHide : BaseStaffHide
     {
-        [SerializableField(1)]
-        [SerializableFieldAttr("[CommandProperty(AccessLevel.GameMaster)]")]
+        [SerializableField(0)]
+        [SerializedCommandProperty(AccessLevel.GameMaster)]
         private bool _redGate = false;
 
-        [SerializableField(2)]
-        [SerializableFieldAttr("[CommandProperty(AccessLevel.GameMaster)]")]
+        [SerializableField(1)]
+        [SerializedCommandProperty(AccessLevel.GameMaster)]
         private int _gateHue;
 
-        [SerializableField(3)]
-        [SerializableFieldAttr("[CommandProperty(AccessLevel.GameMaster)]")]
+        [SerializableField(2)]
+        [SerializedCommandProperty(AccessLevel.GameMaster)]
         private int _gateSound;
 
         public override string DefaultName => "Gate Hide";

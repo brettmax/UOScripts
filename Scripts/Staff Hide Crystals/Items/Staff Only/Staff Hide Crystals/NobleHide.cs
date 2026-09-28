@@ -6,11 +6,11 @@ namespace Server.Items
     public partial class NobleHide : BaseStaffHide
     {
         [SerializableField(0)]
-        [SerializableFieldAttr("[CommandProperty(AccessLevel.GameMaster)]")]
+        [SerializedCommandProperty(AccessLevel.GameMaster)]
         private int _effectHue = 5;
 
         [SerializableField(1)]
-        [SerializableFieldAttr("[CommandProperty(AccessLevel.GameMaster)]")]
+        [SerializedCommandProperty(AccessLevel.GameMaster)]
         private int _effectSound = 0x244;
 
         public override string DefaultName => "Noble Hide";

@@ -1,5 +1,9 @@
 # Scripts
-A repository of scripts for ModernUO
+A repository of scripts for ModernUO, and the server package set for AxmolUO
+
+### AxmolUO server
+`AxmolUO.Server.slnx` builds a The Second Age server from ModernUO, ModernSpawner and the drop-in scripts here.
+`tools/stage-server.sh` stages a runnable server. See [docs/server-packages.md](docs/server-packages.md).
 
 ### Getting Started
 1. Clone this repository
