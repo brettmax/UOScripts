@@ -14,7 +14,11 @@ alone, so re-staging does not wipe a shard.
 Headless first boot: set UO_DATA_DIR to the Ultima Online data folder (maps,
 statics, tiledata, multis) and the first stage also writes
 Configuration\modernuo.json, so the server boots without console prompts.
-LISTEN (default 0.0.0.0:2593) and SERVER_NAME (default AxmolUO) tune it.
+LISTEN (default 127.0.0.1:2593, local only; use 0.0.0.0:2593 to accept LAN or
+internet clients), SERVER_NAME (default AxmolUO) and UO_CLIENT_VERSION (the
+client version the data files come from, default 1.25.35) tune it. On the
+first boot of a headless server, OWNER_USERNAME and OWNER_PASSWORD create the
+owner account (read at run time by the HeadlessOwner script, never stored).
 #>
 param(
     [ValidateSet('Debug', 'Release')]
@@ -76,13 +80,26 @@ if ($env:UO_DATA_DIR -and -not (Test-Path -LiteralPath $serverConfig)) {
     if (-not (Test-Path -LiteralPath $env:UO_DATA_DIR -PathType Container)) {
         throw "UO_DATA_DIR '$env:UO_DATA_DIR' does not exist"
     }
-    $listen = if ($env:LISTEN) { $env:LISTEN } else { '0.0.0.0:2593' }
+    $listen = if ($env:LISTEN) { $env:LISTEN } else { '127.0.0.1:2593' }
     $serverName = if ($env:SERVER_NAME) { $env:SERVER_NAME } else { 'AxmolUO' }
+    $clientVersion = if ($env:UO_CLIENT_VERSION) { $env:UO_CLIENT_VERSION } else { '1.25.35' }
+    $serverSettings = [ordered]@{
+        'serverListing.serverName'              = $serverName
+        # The data files' client version: an undetectable pre-7.0.9 client would
+        # otherwise be read as post-HS, which misreads T2A multis (houses, boats).
+        'clientData.clientVersion'              = $clientVersion
+        'maps.enablePostHSMultiComponentFormat' = 'false'
+    }
+    # A loopback-only shard has no public address to look up.
+    $listenHost = $listen.Substring(0, $listen.LastIndexOf(':')).Trim('[', ']')
+    if ([Net.IPAddress]::IsLoopback([Net.IPAddress]::Parse($listenHost))) {
+        $serverSettings['serverListing.autoDetect'] = 'false'
+    }
     $settings = [ordered]@{
         assemblyDirectories = @()
         dataDirectories     = @((Resolve-Path -LiteralPath $env:UO_DATA_DIR).Path)
         listeners           = @($listen)
-        settings            = [ordered]@{ 'serverListing.serverName' = $serverName }
+        settings            = $serverSettings
     }
     # No BOM: Windows PowerShell 5.1's Set-Content -Encoding utf8 would add one.
     [IO.File]::WriteAllText($serverConfig, ($settings | ConvertTo-Json -Depth 4), (New-Object Text.UTF8Encoding $false))

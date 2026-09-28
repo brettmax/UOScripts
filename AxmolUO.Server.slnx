@@ -14,6 +14,7 @@
     <Project Path="Modules/ModernSpawner/Projects/ModernSpawner.Tests/ModernSpawner.Tests.csproj" />
   </Folder>
   <Folder Name="/Scripts/">
+    <Project Path="Scripts/HeadlessOwner/HeadlessOwner.csproj" />
     <Project Path="Scripts/MurderPenalty/MurderPenalty.csproj" />
     <Project Path="Scripts/MurderPenalty.Tests/MurderPenalty.Tests.csproj" />
     <Project Path="Scripts/Staff Hide Crystals/Staff Hide Crystals.csproj" />
