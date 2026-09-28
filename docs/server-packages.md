@@ -33,6 +33,19 @@ tools/stage-server.sh Release Staging    # runnable server in Staging/
 dotnet Staging/ModernUO.dll
 ```
 
+On Windows without Git Bash or WSL, `tools\stage-server.ps1 -Configuration Release`
+does the same from PowerShell 5.1 or 7 (run it with `-ExecutionPolicy Bypass` if
+local scripts are blocked).
+
+For a headless first boot (containers, services), set `UO_DATA_DIR` to the UO
+data folder when staging; the script then writes `Configuration/modernuo.json`
+(listener `LISTEN`, default `0.0.0.0:2593`; name `SERVER_NAME`, default
+`AxmolUO`), so the server starts without console prompts:
+
+```powershell
+$env:UO_DATA_DIR='C:\UO'; powershell -ExecutionPolicy Bypass -File tools\stage-server.ps1; dotnet Staging\ModernUO.dll
+```
+
 On first boot the server asks for the Ultima Online data directory (maps,
 statics, tiledata, multis). It needs the original client data files; see below.
 
