@@ -36,12 +36,7 @@ public class MurderPenaltySystemTests
 
     private static void AddDamageEntry(PlayerMobile victim, Mobile damager)
     {
-        var entry = new DamageEntry(damager)
-        {
-            LastDamage = Core.Now,
-            DamageGiven = 10
-        };
-        victim.DamageEntries.Add(entry);
+        victim.RegisterDamage(10, damager);
     }
 
     private static void EnableJailSystem()

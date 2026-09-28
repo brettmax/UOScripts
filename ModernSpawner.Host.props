@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project>
+    <!--
+      Imported by Modules/ModernSpawner/Directory.Build.props. Builds ModernSpawner against
+      this repository's ModernUO submodule, so the server package set builds Server and
+      UOContent once rather than from a second, nested ModernUO checkout.
+    -->
+    <PropertyGroup>
+        <ModernUORoot>$(MSBuildThisFileDirectory)ModernUO/</ModernUORoot>
+    </PropertyGroup>
+</Project>

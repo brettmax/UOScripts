@@ -1,15 +1,22 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net6.0</TargetFramework>
     <RootNamespace>Server</RootNamespace>
-    <PublishDir>..\..\Distribution\Assembiles</PublishDir>
-    <OutDir>..\..\Distribution\Assembiles</OutDir>
+    <OutDir>$(ScriptsAssemblyDir)</OutDir>
+    <PublishDir>$(ScriptsAssemblyDir)</PublishDir>
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\ModernUO\Projects\Server\Server.csproj" />
-    <ProjectReference Include="..\..\ModernUO\Projects\UOContent\UOContent.csproj" />
+    <ProjectReference Include="$(ModernUORoot)Projects/Server/Server.csproj" Private="false" />
+    <ProjectReference Include="$(ModernUORoot)Projects/UOContent/UOContent.csproj" Private="false" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="ModernUO.Serialization.Generator" Version="4.1.0" PrivateAssets="all" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <AdditionalFiles Include="Migrations/*.v*.json" />
   </ItemGroup>
 
 </Project>

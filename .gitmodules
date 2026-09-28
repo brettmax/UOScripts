@@ -1,3 +1,6 @@
 [submodule "ModernUO"]
 	path = ModernUO
-	url = git@github.com:modernuo/ModernUO.git
+	url = https://github.com/modernuo/ModernUO.git
+[submodule "Modules/ModernSpawner"]
+	path = Modules/ModernSpawner
+	url = https://github.com/brettmax/UOModernSpawner.git
