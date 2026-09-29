@@ -12,7 +12,11 @@
 # Headless first boot: set UO_DATA_DIR to the Ultima Online data folder (maps,
 # statics, tiledata, multis) and the first stage also writes
 # Configuration/modernuo.json, so the server boots without console prompts.
-# LISTEN (default 0.0.0.0:2593) and SERVER_NAME (default AxmolUO) tune it.
+# LISTEN (default 127.0.0.1:2593, local only; use 0.0.0.0:2593 to accept LAN or
+# internet clients), SERVER_NAME (default AxmolUO) and UO_CLIENT_VERSION (the
+# client version the data files come from, default 1.25.35) tune it. On the
+# first boot of a headless server, OWNER_USERNAME and OWNER_PASSWORD create the
+# owner account (read at run time by the HeadlessOwner script, never stored).
 set -euo pipefail
 
 REPO_ROOT="$(cd "$(dirname "$0")/.." && pwd)"
@@ -47,14 +51,26 @@ if [ -n "${UO_DATA_DIR:-}" ] && [ ! -f "$OUT/Configuration/modernuo.json" ]; the
     echo "UO_DATA_DIR '$UO_DATA_DIR' does not exist" >&2
     exit 1
   fi
-  UO_DATA_DIR="$(cd "$UO_DATA_DIR" && pwd)" LISTEN="${LISTEN:-0.0.0.0:2593}" \
-  SERVER_NAME="${SERVER_NAME:-AxmolUO}" python3 - "$OUT/Configuration/modernuo.json" <<'PY'
-import json, os, sys
+  UO_DATA_DIR="$(cd "$UO_DATA_DIR" && pwd)" LISTEN="${LISTEN:-127.0.0.1:2593}" \
+  SERVER_NAME="${SERVER_NAME:-AxmolUO}" UO_CLIENT_VERSION="${UO_CLIENT_VERSION:-1.25.35}" \
+  python3 - "$OUT/Configuration/modernuo.json" <<'PY'
+import ipaddress, json, os, sys
+listen = os.environ["LISTEN"]
+settings = {
+    "serverListing.serverName": os.environ["SERVER_NAME"],
+    # The data files' client version: an undetectable pre-7.0.9 client would
+    # otherwise be read as post-HS, which misreads T2A multis (houses, boats).
+    "clientData.clientVersion": os.environ["UO_CLIENT_VERSION"],
+    "maps.enablePostHSMultiComponentFormat": "false",
+}
+# A loopback-only shard has no public address to look up.
+if ipaddress.ip_address(listen.rsplit(":", 1)[0].strip("[]")).is_loopback:
+    settings["serverListing.autoDetect"] = "false"
 json.dump({
     "assemblyDirectories": [],
     "dataDirectories": [os.environ["UO_DATA_DIR"]],
-    "listeners": [os.environ["LISTEN"]],
-    "settings": {"serverListing.serverName": os.environ["SERVER_NAME"]},
+    "listeners": [listen],
+    "settings": settings,
 }, open(sys.argv[1], "w"), indent=2)
 PY
 fi

@@ -1,0 +1,14 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <RootNamespace>Server.Misc</RootNamespace>
+    <OutDir>$(ScriptsAssemblyDir)</OutDir>
+    <PublishDir>$(ScriptsAssemblyDir)</PublishDir>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="$(ModernUORoot)Projects/Server/Server.csproj" Private="false" />
+    <ProjectReference Include="$(ModernUORoot)Projects/UOContent/UOContent.csproj" Private="false" />
+  </ItemGroup>
+
+</Project>

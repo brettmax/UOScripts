@@ -10,7 +10,7 @@ packages rather than forking the engine.
 |---|---|---|
 | ModernUO core (`Server`, `UOContent`, `Application`, `Logger`) | `ModernUO/` submodule | Upstream ModernUO, unmodified. Engine changes go upstream. |
 | ModernSpawner | `Modules/ModernSpawner/` submodule | Built against this repo's `ModernUO/` through `ModernSpawner.Host.props`. |
-| Drop-in scripts | `Scripts/` | `MurderPenalty`, `Staff Hide Crystals`. `Template` is the starting point for new ones. |
+| Drop-in scripts | `Scripts/` | `MurderPenalty`, `Staff Hide Crystals`, `HeadlessOwner`. `Template` is the starting point for new ones. |
 | Serialization generator | NuGet `ModernUO.Serialization.Generator` | Same version ModernUO pins, so generated code matches the engine. |
 | Socket I/O | NuGet `IORingGroup` | Consumed by ModernUO's `Server` project. |
 
@@ -38,13 +38,26 @@ does the same from PowerShell 5.1 or 7 (run it with `-ExecutionPolicy Bypass` if
 local scripts are blocked).
 
 For a headless first boot (containers, services), set `UO_DATA_DIR` to the UO
-data folder when staging; the script then writes `Configuration/modernuo.json`
-(listener `LISTEN`, default `0.0.0.0:2593`; name `SERVER_NAME`, default
-`AxmolUO`), so the server starts without console prompts:
+data folder when staging; the script then writes `Configuration/modernuo.json`,
+so the server starts without console prompts. It is written on first stage only;
+delete it to pick up new values.
+
+| Variable | Default | Effect |
+|---|---|---|
+| `LISTEN` | `127.0.0.1:2593` | Local only, no public-IP lookup. `0.0.0.0:2593` accepts LAN and internet clients. |
+| `SERVER_NAME` | `AxmolUO` | Name in the shard list. |
+| `UO_CLIENT_VERSION` | `1.25.35` | Client version the data files come from. Old `client.exe` files carry no version, and an unknown version is treated as post-High Seas, which misreads T2A houses and boats. It is also the minimum client version the server accepts. |
+
+The first boot of a headless server with no accounts needs the owner account
+from `OWNER_USERNAME` and `OWNER_PASSWORD`, read at run time by the
+`HeadlessOwner` script and never written to configuration:
 
 ```powershell
-$env:UO_DATA_DIR='C:\UO'; powershell -ExecutionPolicy Bypass -File tools\stage-server.ps1; dotnet Staging\ModernUO.dll
+$env:UO_DATA_DIR='C:\UO'; powershell -ExecutionPolicy Bypass -File tools\stage-server.ps1; $env:OWNER_USERNAME='admin'; $env:OWNER_PASSWORD='change-me'; dotnet Staging\ModernUO.dll
 ```
+
+Warnings such as `map2.mul was not found` are expected with Felucca-only data:
+ModernUO registers every map, and UOContent code refers to all of them.
 
 On first boot the server asks for the Ultima Online data directory (maps,
 statics, tiledata, multis). It needs the original client data files; see below.
